@@ -1,0 +1,46 @@
+.Dd April 27, 2009
+.Dt SHORTRPM 1
+.Os
+.Sh NAME
+.Nm shortrpm
+.Nd Short-circuit binary RPM package build
+.Sh SYNOPSIS
+.Nm shortrpm
+.Op Fl -bb
+.Op Fl --short-circuit
+.Op Ar rpmbuild options
+.Ek
+.Sh DESCRIPTION
+.Nm
+tricks 
+.Xr rpmbuild 1
+into thinking certain scriptlets in SPEC file are empty,
+effectively skipping their run and proceeding to build the
+binary package from files from previous %install scriptlet
+run in BuildRoot. The trickery only takes place if both
+.Ar -bb
+and
+.Ar --short-circuit
+options are specified.
+
+See
+.Xr rpmbuild 1
+manual for descriptions of all options.
+.Sh BUGS
+Line numbers in eventual error messages may not correspond to actual line
+numbers in SPEC file.
+
+.Xr open 3
+function is overriden for rpmbuild's children as well.
+
+If
+.Xr rpmbuild 1
+crashes when using
+.Nm
+please do not send problem report to RPM developers unless you can reproduce
+the problem with clean RPM as well.
+.Sh AUTHORS
+.Nm
+was written by Lubomir Rintel <lkundrak@v3.sk>.
+
+Latest version can be obtained from <http://v3.sk/~lkundrak/shortrpm>.
