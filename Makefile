@@ -5,7 +5,7 @@
 # Copyright (C) 2009 Lubomir Rintel <lkundrak@v3.sk>
 
 NAME=shortrpm
-VERSION=1.0
+VERSION=1.1
 
 CFLAGS ?= -Wall -pedantic
 PREFIX=/usr/local

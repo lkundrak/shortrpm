@@ -4,7 +4,10 @@
  *
  * Copyright (C) 2009 Lubomir Rintel <lkundrak@v3.sk> */
 
+#define _GNU_SOURCE 1
+
 #include <ctype.h>
+#include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdarg.h>
@@ -14,9 +17,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-
-#define __USE_GNU 1
-#include <dlfcn.h>
 
 /* Filename matches *.spec */
 static int
@@ -145,7 +145,15 @@ fake_open (filename, flags)
 		goto fork_fail;
 	case 0:
 		close (fds[0]);
-		exit (-fake_spec (fds[1], real_fd));
+		/* Deamonize so that we are not waited for */
+		switch (fork ()) {
+		case 0:
+			exit (-fake_spec (fds[1], real_fd));
+		case -1:
+			exit (1);
+		default:
+			exit (0);
+		}
 	default:
 		close (real_fd);
 		close (fds[1]);
@@ -182,5 +190,5 @@ open (const char *filename, int flags, ...)
 }
 
 /* Largefile one */
-void
-open64 (void) __attribute__ ((alias ("open")));
+int
+open64 (const char *, int, ...) __attribute__ ((alias ("open")));
