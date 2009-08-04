@@ -18,6 +18,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "shortrpm.h"
+
 /* Filename matches *.spec */
 static int
 is_spec (filename)
@@ -52,14 +54,7 @@ is_section (line)
 	char *line;
 {
 	char *p;
-	static const char *sections[] = {
-		"%prep",
-		"%build",
-		"%install",
-		"%check",
-		"%clean",
-		NULL
-	};
+	static const char *sections[] =  { SECTIONS("%", ""), NULL };
 	const char **section;
 
 	p = line;

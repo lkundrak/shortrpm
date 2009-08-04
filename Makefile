@@ -5,9 +5,9 @@
 # Copyright (C) 2009 Lubomir Rintel <lkundrak@v3.sk>
 
 NAME=shortrpm
-VERSION=1.1
+VERSION=1.2
 
-CFLAGS ?= -Wall -pedantic
+CFLAGS ?= -Wall
 PREFIX=/usr/local
 
 CPPFLAGS = -DRPMBUILD=\"$(shell which rpmbuild)\"
@@ -15,11 +15,14 @@ CPPFLAGS ?= -DRPMBUILD=\"$(PREFIX)/bin/rpmbuild\"
 CPPFLAGS += -DSPECMANGLE=\"$(PREFIX)/libexec/shortrpm/specmangle.so\"
 
 BINS = shortrpm specmangle.so
-DISTFILES = shortrpm.1 shortrpm.c specmangle.c t/mangle.t \
+DISTFILES = shortrpm.1 shortrpm.c shortrpm.h specmangle.c t/mangle.t \
 	COPYING Makefile shortrpm.sh shortrpm.csh
 
 # Build world
 all: $(BINS)
+
+# Dependencies
+$(BINS): shortrpm.h
 
 # Clean up
 clean:

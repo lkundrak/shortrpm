@@ -7,6 +7,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdio.h>
+
+#include "shortrpm.h"
 
 #ifndef RPMBUILD
 # define RPMBUILD "/usr/bin/rpmbuild"
@@ -23,7 +26,22 @@ main (argc, argv)
 {
 	int bb = 0;
 	int sc = 0;
+	char **c;
+	char **rpm_argv;
 	int i;
+
+	static const char *sections[] = {
+		SECTIONS("__spec_", "_post %{___build_post}"),
+		SECTIONS("__spec_", "_pre %{___build_pre}"),
+		NULL
+	};
+
+	/* Original arguments plus the --defines & trailing NULL */
+	rpm_argv = malloc ((argc - 1) * sizeof(*argv) + 2 * sizeof(sections));
+	if (!rpm_argv) {
+		perror (argv[0]);
+		return 1;
+	}
 
 	/* Find out whether we're going to intercept */
 	for (i = 0; i < argc; i++) {
@@ -35,11 +53,21 @@ main (argc, argv)
 		rpm_argv[i] = argv[i];
 	}
 
+	/* Disable section scriptlets for sections we skip*/
+	if (bb && sc) {
+		for (c = (char **)sections; *c; *c++) {
+			rpm_argv[i++] = "--define";
+			rpm_argv[i++] = *c;
+		}
+	}
+
+	rpm_argv[i] = NULL;
+
 	/* Pass control */
 	if (bb && sc)
 		putenv ("LD_PRELOAD=" SPECMANGLE);
 	argv[0] = RPMBUILD;
-	execv (RPMBUILD, argv);
+	execv (RPMBUILD, rpm_argv);
 
 	return 1;
 }
