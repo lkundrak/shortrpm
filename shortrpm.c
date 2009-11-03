@@ -43,8 +43,9 @@ main (argc, argv)
 		return 1;
 	}
 
-	/* Find out whether we're going to intercept */
-	for (i = 0; i < argc; i++) {
+	/* Copy arguments, finding out whether we're going to intercept */
+	rpm_argv[0] = RPMBUILD;
+	for (i = 1; i < argc; i++) {
 		if (strcmp (argv[i], "--short-circuit") == 0) sc++;
 		else if (strcmp (argv[i], "-bb") == 0) bb++;
 		else if (strcmp (argv[i], "-tb") == 0) bb++;
