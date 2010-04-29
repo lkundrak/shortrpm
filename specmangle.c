@@ -2,7 +2,7 @@
  * GNU General Public License as published by Free Software Foundation,
  * version 2 or (at your option) any later version.
  *
- * Copyright (C) 2009 Lubomir Rintel <lkundrak@v3.sk> */
+ * Copyright (C) 2009,2010 Lubomir Rintel <lkundrak@v3.sk> */
 
 #define _GNU_SOURCE 1
 
@@ -46,6 +46,23 @@ real_open (filename, flags, mode)
 		return -1;
 	}
 	return libc_open (filename, flags, mode);
+}
+
+/* glibc fopen */
+FILE *
+real_fopen (filename, modes)
+	const char *filename;
+	const char *modes;
+{
+	FILE *(*libc_fopen)(const char *, const char *);
+	libc_fopen = dlsym (RTLD_NEXT, "fopen64");
+	if (libc_fopen == NULL)
+		libc_fopen = dlsym (RTLD_NEXT, "fopen");
+	if (libc_fopen == NULL) {
+		errno = EFAULT;
+		return NULL;
+	}
+	return libc_fopen (filename, modes);
 }
 
 /* Matches "[whitespace]*%section" */
@@ -178,12 +195,31 @@ open (const char *filename, int flags, ...)
 		va_end (args);
 	}
 
-	if ((flags == 0 || flags & O_RDONLY) && is_spec (filename))
+	if ((flags == 0 || flags & O_RDONLY) && is_spec (filename)) {
 		return fake_open (filename, flags);
+	}
 
 	return real_open (filename, flags, mode);
 }
 
-/* Largefile one */
+/* Override standard fopen() */
+FILE *
+fopen (filename, modes)
+	const char *filename;
+	const char *modes;
+{
+	if (is_spec (filename) && strcmp (modes, "r") == 0) {
+		int fd = fake_open (filename, O_RDONLY);
+		return fdopen (fd, modes);
+	}
+
+	return real_fopen (filename, modes);
+}
+
+/* Largefile open() */
 int
 open64 (const char *, int, ...) __attribute__ ((alias ("open")));
+
+/* Largefile fopen() */
+FILE *
+fopen64 (const char *, const char *) __attribute__ ((alias ("fopen")));
