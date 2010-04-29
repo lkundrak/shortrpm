@@ -27,10 +27,12 @@ main (argc, argv)
 
 	/* Find out whether we're going to intercept */
 	for (i = 0; i < argc; i++) {
-		if (strcmp (argv[i], "-bb") == 0)
-			bb++;
-		if (strcmp (argv[i], "--short-circuit") == 0)
-			sc++;
+		if (strcmp (argv[i], "--short-circuit") == 0) sc++;
+		else if (strcmp (argv[i], "-bb") == 0) bb++;
+		else if (strcmp (argv[i], "-tb") == 0) bb++;
+		else if (strcmp (argv[i], "-ba") == 0) bb++;
+		else if (strcmp (argv[i], "-ta") == 0) bb++;
+		rpm_argv[i] = argv[i];
 	}
 
 	/* Pass control */
