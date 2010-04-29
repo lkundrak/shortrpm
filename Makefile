@@ -18,15 +18,18 @@ BINS = shortrpm specmangle.so
 DISTFILES = shortrpm.1 shortrpm.c shortrpm.h specmangle.c t/mangle.t \
 	COPYING Makefile shortrpm.sh shortrpm.csh
 
+override CFLAGS += -fPIC
+
 # Build world
 all: $(BINS)
 
 # Dependencies
-$(BINS): shortrpm.h
+shortrpm.o: shortrpm.h
+specmangle.o: shortrpm.h
 
 # Clean up
 clean:
-	rm -rf $(BINS) $(NAME)-$(VERSION){,.tar.gz}
+	rm -rf $(BINS) *.o $(NAME)-$(VERSION){,.tar.gz}
 
 # Install
 install: $(BINS)
@@ -48,6 +51,6 @@ test: all
 	./t/mangle.t
 
 # Build DSO
-.SUFFIXES: .c .so
-.c.so:
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -shared -ldl -fPIC -o $@ $<
+.SUFFIXES: .o .so
+.o.so:
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LDFLAGS) -shared -ldl -o $@ $<
