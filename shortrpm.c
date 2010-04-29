@@ -56,7 +56,7 @@ main (argc, argv)
 
 	/* Disable section scriptlets for sections we skip*/
 	if (bb && sc) {
-		for (c = (char **)sections; *c; *c++) {
+		for (c = (char **)sections; *c; c++) {
 			rpm_argv[i++] = "--define";
 			rpm_argv[i++] = *c;
 		}

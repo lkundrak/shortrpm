@@ -128,7 +128,7 @@ fake_open (filename, flags)
 		goto pipe_fail;
 	}
 
-	real_fd = real_open (filename, flags);
+	real_fd = real_open (filename, flags, 0);
 	if (real_fd == -1) {
 		saved_errno = errno;
 		goto open_fail;
