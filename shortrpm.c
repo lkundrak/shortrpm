@@ -28,7 +28,7 @@ main (argc, argv)
 	int sc = 0;
 	char **c;
 	char **rpm_argv;
-	int i;
+	int i, ia;
 
 	static const char *sections[] = {
 		SECTIONS("__spec_", "_post %{___build_post}"),
@@ -45,24 +45,26 @@ main (argc, argv)
 
 	/* Copy arguments, finding out whether we're going to intercept */
 	rpm_argv[0] = RPMBUILD;
-	for (i = 1; i < argc; i++) {
-		if (strcmp (argv[i], "--short-circuit") == 0) sc++;
-		else if (strcmp (argv[i], "-bb") == 0) bb++;
+	for (i = ia = 1; i < argc; i++) {
+		if (strcmp (argv[i], "--short-circuit") == 0) {
+			sc++;
+			continue;
+		} else if (strcmp (argv[i], "-bb") == 0) bb++;
 		else if (strcmp (argv[i], "-tb") == 0) bb++;
 		else if (strcmp (argv[i], "-ba") == 0) bb++;
 		else if (strcmp (argv[i], "-ta") == 0) bb++;
-		rpm_argv[i] = argv[i];
+		rpm_argv[ia++] = argv[i];
 	}
 
 	/* Disable section scriptlets for sections we skip*/
 	if (bb && sc) {
 		for (c = (char **)sections; *c; c++) {
-			rpm_argv[i++] = "--define";
-			rpm_argv[i++] = *c;
+			rpm_argv[ia++] = "--define";
+			rpm_argv[ia++] = *c;
 		}
 	}
 
-	rpm_argv[i] = NULL;
+	rpm_argv[ia] = NULL;
 
 	/* Pass control */
 	if (bb && sc)
