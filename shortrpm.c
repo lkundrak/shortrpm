@@ -2,7 +2,7 @@
  * GNU General Public License as published by Free Software Foundation,
  * version 2 or (at your option) any later version.
  *
- * Copyright (C) 2009 Lubomir Rintel <lkundrak@v3.sk> */
+ * Copyright (C) 2009,2016 Lubomir Rintel <lkundrak@v3.sk> */
 
 #include <stdlib.h>
 #include <string.h>

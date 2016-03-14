@@ -2,10 +2,10 @@
 # GNU General Public License as published by Free Software Foundation,
 # version 2 or (at your option) any later version.
 #
-# Copyright (C) 2009,2010 Lubomir Rintel <lkundrak@v3.sk>
+# Copyright (C) 2009,2010,2016 Lubomir Rintel <lkundrak@v3.sk>
 
 NAME=shortrpm
-VERSION=1.3
+VERSION=1.4
 
 CFLAGS ?= -Wall
 PREFIX=/usr/local
